@@ -12,9 +12,14 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import { Menu } from '@mui/icons-material';
+import {useAppSelector} from "./store";
+import {StatusLoadingType} from "./app-reducer";
+import LinearProgress from "@mui/material/LinearProgress";
 
 
 function App() {
+
+    const status=useAppSelector<StatusLoadingType>(state=>state.app.statusLoading)
 
     return (
         <div className="App">
@@ -29,6 +34,7 @@ function App() {
                     <Button color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
+            {status==='loading' && <LinearProgress color="secondary" />}
             <Container fixed>
                 <TodolistsList/>
             </Container>
