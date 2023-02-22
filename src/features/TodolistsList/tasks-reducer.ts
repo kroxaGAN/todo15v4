@@ -3,6 +3,8 @@ import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelTyp
 import {Dispatch} from 'redux'
 import {AppRootStateType} from '../../app/store'
 import {AppActionType, changeErrorStatusAC, changeLoadingStatusAC} from "../../app/app-reducer";
+import {AxiosError} from "axios";
+import {appServerAppError, appServerNetworkError} from "../../utils/error-util";
 
 const initialState: TasksStateType = {}
 
@@ -53,11 +55,19 @@ export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<ActionsT
     dispatch(changeLoadingStatusAC("loading"))
     todolistsAPI.getTasks(todolistId)
         .then((res) => {
-            const tasks = res.data.items
-            const action = setTasksAC(tasks, todolistId)
-            dispatch(action)
+            if (res.data.error===null){
+                const tasks = res.data.items
+                const action = setTasksAC(tasks, todolistId)
+                dispatch(action)
+            } else {
+                dispatch(changeErrorStatusAC(res.data.error))
+                dispatch(changeLoadingStatusAC("false"))
+            }
         })
-        .finally(()=>{
+        .catch((err)=>{
+            appServerNetworkError(dispatch,err)
+        })
+        .finally(() => {
             dispatch(changeLoadingStatusAC("successed"))
         })
 }
@@ -65,10 +75,16 @@ export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: D
     dispatch(changeLoadingStatusAC("loading"))
     todolistsAPI.deleteTask(todolistId, taskId)
         .then(res => {
-            const action = removeTaskAC(taskId, todolistId)
-            dispatch(action)
+            if (res.data.resultCode === 0) {
+                dispatch(removeTaskAC(taskId, todolistId))
+            } else {
+                appServerAppError(res.data, dispatch)
+            }
         })
-        .finally(()=>{
+        .catch((err:AxiosError)=>{
+            appServerNetworkError(dispatch,err)
+        })
+        .finally(() => {
             dispatch(changeLoadingStatusAC("successed"))
         })
 }
@@ -76,21 +92,19 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
     dispatch(changeLoadingStatusAC("loading"))
     todolistsAPI.createTask(todolistId, title)
         .then(res => {
-            if (res.data.resultCode===0){
+            if (res.data.resultCode === 0) {
                 const task = res.data.data.item
                 const action = addTaskAC(task)
                 dispatch(action)
             } else {
-                if(res.data.messages.length){
-                    dispatch(changeErrorStatusAC(res.data.messages[0]))
-                }else{
-                    dispatch(changeErrorStatusAC("something not good ...."))
-                }
+                appServerAppError(res.data, dispatch)
             }
 
-
         })
-        .finally(()=>{
+        .catch((err: AxiosError) => {
+            appServerNetworkError(dispatch, err)
+        })
+        .finally(() => {
             dispatch(changeLoadingStatusAC("successed"))
         })
 }
@@ -114,13 +128,18 @@ export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelT
             ...domainModel
         }
         dispatch(changeLoadingStatusAC("loading"))
-
         todolistsAPI.updateTask(todolistId, taskId, apiModel)
             .then(res => {
-                const action = updateTaskAC(taskId, domainModel, todolistId)
-                dispatch(action)
+                if (res.data.resultCode === 0) {
+                    dispatch(updateTaskAC(taskId, domainModel, todolistId))
+                } else {
+                    appServerAppError(res.data, dispatch)
+                }
             })
-            .finally(()=>{
+            .catch((err: AxiosError) => {
+                appServerNetworkError(dispatch, err)
+            })
+            .finally(() => {
                 dispatch(changeLoadingStatusAC("successed"))
             })
     }

@@ -1,6 +1,7 @@
 import {todolistsAPI, TodolistType} from '../../api/todolists-api'
 import {Dispatch} from 'redux'
 import {AppActionType, changeLoadingStatusAC, StatusLoadingType} from "../../app/app-reducer";
+import {appServerAppError, appServerNetworkError} from "../../utils/error-util";
 
 const initialState: Array<TodolistDomainType> = []
 
@@ -63,10 +64,14 @@ export const removeTodolistTC = (todolistId: string) => {
         dispatch(changeEntityStatusAC(todolistId,"loading"))
         todolistsAPI.deleteTodolist(todolistId)
             .then((res) => {
-                dispatch(removeTodolistAC(todolistId))
+                if(res.data.resultCode===0){
+                    dispatch(removeTodolistAC(todolistId))
+                }else {
+                    appServerAppError(res.data,dispatch)
+                }
             })
-            .catch(()=>{
-                dispatch(changeEntityStatusAC(todolistId,"false"))
+            .catch((err)=>{
+                appServerNetworkError(dispatch,err)
             })
             .finally(()=>{
                 dispatch(changeLoadingStatusAC("successed"))
@@ -78,7 +83,14 @@ export const addTodolistTC = (title: string) => {
         dispatch(changeLoadingStatusAC("loading"))
         todolistsAPI.createTodolist(title)
             .then((res) => {
-                dispatch(addTodolistAC(res.data.data.item))
+                if (res.data.resultCode===0){
+                    dispatch(addTodolistAC(res.data.data.item))
+                } else {
+                    appServerAppError(res.data, dispatch)
+                }
+            })
+            .catch((err)=>{
+                appServerNetworkError(dispatch,err)
             })
             .finally(()=>{
                 dispatch(changeLoadingStatusAC("successed"))
@@ -90,7 +102,14 @@ export const changeTodolistTitleTC = (id: string, title: string) => {
         dispatch(changeLoadingStatusAC("loading"))
         todolistsAPI.updateTodolist(id, title)
             .then((res) => {
-                dispatch(changeTodolistTitleAC(id, title))
+                if(res.data.resultCode===0){
+                    dispatch(changeTodolistTitleAC(id, title))
+                } else {
+                    appServerAppError(res.data,dispatch)
+                }
+            })
+            .catch((err)=>{
+                appServerNetworkError(dispatch,err)
             })
             .finally(()=>{
                 dispatch(changeLoadingStatusAC("successed"))
