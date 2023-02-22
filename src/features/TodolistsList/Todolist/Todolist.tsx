@@ -2,7 +2,7 @@ import React, {useCallback, useEffect} from 'react'
 import {AddItemForm} from '../../../components/AddItemForm/AddItemForm'
 import {EditableSpan} from '../../../components/EditableSpan/EditableSpan'
 import {Task} from './Task/Task'
-import {TaskStatuses, TaskType} from '../../../api/todolists-api'
+import {DomainTaskType, TaskStatuses} from '../../../api/todolists-api'
 import {FilterValuesType} from '../todolists-reducer'
 import {fetchTasksTC} from '../tasks-reducer'
 import IconButton from '@mui/material/IconButton';
@@ -14,7 +14,7 @@ import {StatusLoadingType} from "../../../app/app-reducer";
 type PropsType = {
     id: string
     title: string
-    tasks: Array<TaskType>
+    tasks: Array<DomainTaskType>
     changeFilter: (value: FilterValuesType, todolistId: string) => void
     addTask: (title: string, todolistId: string) => void
     changeTaskStatus: (id: string, status: TaskStatuses, todolistId: string) => void
@@ -62,7 +62,7 @@ export const Todolist = React.memo(function (props: PropsType) {
     }
 
     return <div>
-        <h3><EditableSpan value={props.title} onChange={changeTodolistTitle}/>
+        <h3><EditableSpan value={props.title} onChange={changeTodolistTitle} disabled={props.entityStatus === 'loading'}/>
             <IconButton onClick={removeTodolist} disabled={props.entityStatus === 'loading'}>
                 <Delete/>
             </IconButton>
@@ -75,6 +75,7 @@ export const Todolist = React.memo(function (props: PropsType) {
                                                 removeTask={props.removeTask}
                                                 changeTaskTitle={props.changeTaskTitle}
                                                 changeTaskStatus={props.changeTaskStatus}
+                                                entityStatus={t.entityStatus}
                 />)
             }
         </div>

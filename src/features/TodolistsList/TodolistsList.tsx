@@ -9,7 +9,7 @@ import {
     removeTodolistTC,
     TodolistDomainType
 } from './todolists-reducer'
-import {addTaskTC, removeTaskTC, TasksStateType, updateTaskTC} from './tasks-reducer'
+import {addTaskTC, removeTaskTC, TasksDomainStateType, updateTaskTC} from './tasks-reducer'
 import {TaskStatuses} from '../../api/todolists-api'
 import {AddItemForm} from '../../components/AddItemForm/AddItemForm'
 import {Todolist} from './Todolist/Todolist'
@@ -20,7 +20,7 @@ import Paper from '@mui/material/Paper';
 export const TodolistsList: React.FC = () => {
 
     const todolists = useAppSelector<Array<TodolistDomainType>>(state => state.todolists)
-    const tasks = useAppSelector<TasksStateType>(state => state.tasks)
+    const tasks = useAppSelector<TasksDomainStateType>(state => state.tasks)
 
     const dispatch = useAppDispatch()
 
