@@ -16,6 +16,8 @@ import {useAppSelector} from "./store";
 import {StatusLoadingType} from "./app-reducer";
 import LinearProgress from "@mui/material/LinearProgress";
 import {ErrorSnackbar} from "../components/ErrorSnackbar/erorSnackbar";
+import {Login} from "../features/Login/Login";
+import {Routes,Route,Navigate} from "react-router-dom";
 
 
 function App() {
@@ -38,9 +40,17 @@ function App() {
             </AppBar>
             {status === 'loading' && <LinearProgress color="secondary"/>}
             <Container fixed>
-                <TodolistsList/>
+                <Routes>
+                    <Route path={'/'} element=<TodolistsList/> />
+                    <Route path={'/login'} element=<Login/>/>
+                    <Route path={'/404'} element={<h1>404 something wrong ....</h1>}/>
+                    <Route path={'*'} element={<Navigate to={'/404'}/>}/>
+
+                </Routes>
+
             </Container>
             <ErrorSnackbar/>
+
         </div>
     )
 }
