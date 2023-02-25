@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, {AxiosResponse} from 'axios'
 import {StatusLoadingType} from "../app/app-reducer";
 
 const instance = axios.create({
@@ -40,28 +40,31 @@ export const todolistsAPI = {
 // auth
 
 export const authAPI = {
-    login(data:LoginParamsType) {
-        return instance.post<LoginParamsType,AxiosResponse<ResponseType<{userId:number}>>>('auth/login',data)
+    login(data: LoginParamsType) {
+        return instance.post<LoginParamsType, AxiosResponse<ResponseType<{ userId: number }>>>('auth/login', data)
     },
-    me(){
+    me() {
         return instance.get<ResponseType<MeParamsType>>('auth/me')
+    },
+    logout() {
+        return instance.delete<ResponseType>('auth/login')
     }
 }
 
 
 // types
 
-export type MeParamsType={
+export type MeParamsType = {
     id: number,
     email: string,
     login: string
 }
 
-export type LoginParamsType={
-    email:string,
-    password:string,
-    rememberMe?:boolean,
-    captcha?:string
+export type LoginParamsType = {
+    email: string,
+    password: string,
+    rememberMe?: boolean,
+    captcha?: string
 }
 
 export type TodolistType = {
@@ -105,7 +108,7 @@ export type TaskType = {
     order: number
     addedDate: string
 }
-export type DomainTaskType=TaskType & {
+export type DomainTaskType = TaskType & {
     entityStatus: StatusLoadingType
 }
 export type UpdateTaskModelType = {

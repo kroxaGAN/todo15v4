@@ -18,7 +18,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import {ErrorSnackbar} from "../components/ErrorSnackbar/erorSnackbar";
 import {Login} from "../features/Login/Login";
 import {Routes,Route,Navigate} from "react-router-dom";
-import {meTC} from "../features/Login/auth-reducer";
+import {logOutTC, meTC} from "../features/Login/auth-reducer";
 import CircularProgress from "@mui/material/CircularProgress";
 
 
@@ -51,7 +51,7 @@ function App() {
                     <Typography variant="h6">
                         News
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    <Button color="inherit" onClick={()=>{dispatch(logOutTC())}}>Logout</Button>
                 </Toolbar>
             </AppBar>
             {status === 'loading' && <LinearProgress color="secondary"/>}

@@ -72,6 +72,22 @@ export const meTC = () => (dispatch: Dispatch) => {
             dispatch(changeLoadingStatusAC("successed"))
         })
 }
+export const logOutTC=()=>(dispatch: Dispatch)=>{
+    authAPI.logout()
+        .then((res)=>{
+            if(res.data.resultCode===0){
+                dispatch(setIsLoggedInAC(false))
+            }else {
+                appServerAppError(res.data,dispatch)
+            }
+        })
+        .catch((err)=>{
+            appServerNetworkError(dispatch,err)
+        })
+        .finally(()=>{
+            dispatch(changeLoadingStatusAC("successed"))
+        })
+}
 
 
 type AuthActions = ReturnType<typeof setIsLoggedInAC> | ReturnType<typeof setInitialisedUserAC>
