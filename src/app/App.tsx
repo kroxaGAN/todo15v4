@@ -26,6 +26,7 @@ function App() {
 
     const status = useAppSelector<StatusLoadingType>(state => state.app.statusLoading)
     const isInitialized=useAppSelector<boolean>(state=>state.auth.isInitialised)
+    const isLoggedIn=useAppSelector<boolean>(state=>state.auth.isLoggedIn)
     const dispatch=useAppDispatch()
 
     useEffect(()=>{
@@ -51,7 +52,8 @@ function App() {
                     <Typography variant="h6">
                         News
                     </Typography>
-                    <Button color="inherit" onClick={()=>{dispatch(logOutTC())}}>Logout</Button>
+                    {isLoggedIn && <Button color="inherit" onClick={()=>{dispatch(logOutTC())}}>Logout</Button>}
+
                 </Toolbar>
             </AppBar>
             {status === 'loading' && <LinearProgress color="secondary"/>}
