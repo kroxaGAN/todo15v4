@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import './App.css'
 import {TodolistsList} from '../features/TodolistsList/TodolistsList'
 
@@ -12,17 +12,33 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import {Menu} from '@mui/icons-material';
-import {useAppSelector} from "./store";
+import {useAppDispatch, useAppSelector} from "./store";
 import {StatusLoadingType} from "./app-reducer";
 import LinearProgress from "@mui/material/LinearProgress";
 import {ErrorSnackbar} from "../components/ErrorSnackbar/erorSnackbar";
 import {Login} from "../features/Login/Login";
 import {Routes,Route,Navigate} from "react-router-dom";
+import {meTC} from "../features/Login/auth-reducer";
+import CircularProgress from "@mui/material/CircularProgress";
 
 
 function App() {
 
     const status = useAppSelector<StatusLoadingType>(state => state.app.statusLoading)
+    const isInitialized=useAppSelector<boolean>(state=>state.auth.isInitialised)
+    const dispatch=useAppDispatch()
+
+    useEffect(()=>{
+        dispatch(meTC())
+    },[])
+
+    if (!isInitialized) {
+        return <div
+            style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
+            <CircularProgress/>
+        </div>
+    }
+
 
 
     return (
