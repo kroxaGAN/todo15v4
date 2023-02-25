@@ -2,6 +2,7 @@ import {Dispatch} from "redux";
 import {authAPI, LoginParamsType} from "../../api/todolists-api";
 import {appServerAppError, appServerNetworkError} from "../../utils/error-util";
 import {changeLoadingStatusAC} from "../../app/app-reducer";
+import {clearTodolistsAC} from "../TodolistsList/todolists-reducer";
 
 const initialState = {
     isLoggedIn: false,
@@ -77,6 +78,7 @@ export const logOutTC=()=>(dispatch: Dispatch)=>{
         .then((res)=>{
             if(res.data.resultCode===0){
                 dispatch(setIsLoggedInAC(false))
+                dispatch(clearTodolistsAC())
             }else {
                 appServerAppError(res.data,dispatch)
             }

@@ -1,4 +1,9 @@
-import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType} from './todolists-reducer'
+import {
+    AddTodolistActionType,
+    ClearTodolistsActionType,
+    RemoveTodolistActionType,
+    SetTodolistsActionType
+} from './todolists-reducer'
 import {
     DomainTaskType,
     TaskPriorities,
@@ -50,10 +55,15 @@ export const tasksReducer = (state: TasksDomainStateType = initialState, action:
                     entityStatus: 'idle'
                 }))
             }
-        case "CHANGE-TASK-ENTITY-STATUS":{
-            return {...state, [action.todolistId]:state[action.todolistId].map(el=>el.id===action.taskId
-                ?{...el, entityStatus:action.entityStatus}
-                :el)}
+        case "CHANGE-TASK-ENTITY-STATUS": {
+            return {
+                ...state, [action.todolistId]: state[action.todolistId].map(el => el.id === action.taskId
+                    ? {...el, entityStatus: action.entityStatus}
+                    : el)
+            }
+        }
+        case'CLEAR-TODO': {
+            return {}
         }
         default:
             return state
@@ -98,7 +108,7 @@ export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<ActionsT
 }
 export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
     dispatch(changeLoadingStatusAC("loading"))
-    dispatch(changeTaskEntityStatusAC(todolistId,taskId,"loading"))
+    dispatch(changeTaskEntityStatusAC(todolistId, taskId, "loading"))
     todolistsAPI.deleteTask(todolistId, taskId)
         .then(res => {
             if (res.data.resultCode === 0) {
@@ -196,3 +206,4 @@ type ActionsType =
     | ReturnType<typeof setTasksAC>
     | AppActionType
     | ReturnType<typeof changeTaskEntityStatusAC>
+    | ClearTodolistsActionType
